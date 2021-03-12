@@ -2,12 +2,14 @@
 
 namespace App\Controllers;
 
+use Kernel\View;
+
 class OrderController
 {
 
-    public function get()
+    public function index()
     {
-        return 'hellWorld';
+        View::render('orders');
     }
 
     public function create()

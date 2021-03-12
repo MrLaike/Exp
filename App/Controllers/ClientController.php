@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Client;
 use Kernel\View;
 
 class ClientController
@@ -12,6 +13,7 @@ class ClientController
             'name' => 'HER',
             'surname' => 'DRE',
         ];
+        (new Client())->create();
         View::render('client', $data);
     }
 
