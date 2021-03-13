@@ -9,12 +9,11 @@ class ClientController
 {
     public function index()
     {
-        $data = [
-            'name' => 'HER',
-            'surname' => 'DRE',
-        ];
-        (new Client())->create();
-        View::render('client', $data);
+        /** @var Client $client */
+        $client = new Client();
+        $data = $client->create();
+        var_dump($data->title);
+        View::render('client', []);
     }
 
     public function delete()

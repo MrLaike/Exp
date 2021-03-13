@@ -1,26 +1,33 @@
 <?php
 
-namespace App\Database;
+namespace Kernel\Database;
 
 class DB extends \PDO implements DBInterface
 {
+    private $sql;
 
-    public function __construct(
-        $dsn = 'mysql:host=127.0.0.1;dbname=market;charset=utf8',
-        $username = 'test',
-        $passwd = 'password',
-        array $options = [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES   => false,
-        ])
+    public function __construct()
     {
-        parent::__construct($dsn, $username, $passwd, $options);
+        //TODO вынести в конфиг
+        $dsn = 'mysql:dbname=market;host=localhost;port=3306;charset=utf8';
+        $username = 'test';
+        $passwd = 'password';
+
+        parent::__construct($dsn, $username, $passwd);
+        // Убираем возврат номера строки и значение \PDO::FETCH_BOTH
+        $this->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     }
 
-    public function query(): array
+    public function find($params)
     {
-        // TODO: Implement query() method.
+        $this->sql = $params;
+        return $this;
+    }
+
+    public function get()
+    {
+        $result = $this->query($this->sql);
+        return $result;
     }
 
 }

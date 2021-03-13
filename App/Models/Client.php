@@ -9,7 +9,7 @@ class Client extends Model
 
     public function create()
     {
-        var_dump(1);
+        return $this->get();
     }
 
 }

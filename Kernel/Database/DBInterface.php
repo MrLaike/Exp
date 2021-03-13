@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Database;
+namespace Kernel\Database;
 
 interface DBInterface
 {
 
-    public function query(): array;
+    public function get();
+    public function find($params);
 
 }
