@@ -5,6 +5,7 @@ namespace App\Controllers;
 
 use App\Models\Product;
 use Kernel\Collection;
+use Kernel\View;
 
 class ProductController
 {
@@ -14,11 +15,11 @@ class ProductController
         $products = new Product();
         $products = $products->index();
 
-        $array = new Collection();
-        $products->each(function ($data) use ($array) {
-            $array->add($data['id'] + 1);
-        })->first();
+        View::render('products', $products);
+    }
 
-        var_dump($array);
+    public function store()
+    {
+        var_dump('Все чику пуки');
     }
 }

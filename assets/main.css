@@ -1,0 +1,21 @@
+
+.flex {
+    display: flex;
+}
+
+.flex p {
+    margin: 10px;
+}
+
+table {
+    width: 100%;
+    margin: 15px
+}
+
+table td {
+    padding: 10px;
+}
+
+.text-center {
+    text-align: center;
+}

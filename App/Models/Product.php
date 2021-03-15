@@ -15,6 +15,6 @@ class Product extends Model
 {
     public function index(): Collection
     {
-        return $this->get(['id', 'title']);
+        return $this->get();
     }
 }

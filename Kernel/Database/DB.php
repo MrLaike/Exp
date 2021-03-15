@@ -14,7 +14,7 @@ class DB extends \PDO implements DBInterface
         $passwd = 'password';
 
         parent::__construct($dsn, $username, $passwd);
-        // Убираем возврат номера строки и значение \PDO::FETCH_BOTH
+        // Убираем возврат номера строки с индексом 0 (\PDO::FETCH_BOTH)
         $this->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
     }
 

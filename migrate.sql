@@ -14,8 +14,8 @@ CREATE TABLE clients (
   id int unsigned auto_increment not null,
   name varchar(50) not null,
   surname varchar(50) null,
-  phone varchar(15) null,
-  email varchar(50) not null,
+  phone varchar(15) null unique,
+  email varchar(50) not null unique,
 
   PRIMARY KEY (id)
 );
@@ -34,6 +34,38 @@ CREATE TABLE orders (
     ON DELETE CASCADE
 
 );
+
+CREATE TABLE orders_products (
+  order_id int unsigned not null,
+  product_id int unsigned not null,
+
+  INDEX (order_id, product_id),
+
+  FOREIGN KEY (order_id)
+    REFERENCES orders(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+
+  FOREIGN KEY (product_id)
+    REFERENCES products(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+
+);
+
+# Представление, для расчета количества остатка
+CREATE VIEW products_amount AS
+  SELECT
+    s.product_id product_id,
+    (s.amount - COUNT(*)) amount
+  FROM orders_products as op
+    LEFT JOIN orders as o
+      ON o.status = 'success'
+    INNER JOIN store as s
+      ON (o.id = op.order_id AND s.product_id = op.product_id)
+  GROUP BY op.product_id
+;
+
 CREATE TABLE store(
   id int unsigned auto_increment not null,
   product_id int unsigned not null,
@@ -47,8 +79,6 @@ CREATE TABLE store(
     ON DELETE CASCADE
 
 );
-
-
 
 
 # Заполняем таблицы дефолтными значениями

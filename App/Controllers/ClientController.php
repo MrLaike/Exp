@@ -3,23 +3,35 @@
 namespace App\Controllers;
 
 use App\Models\Client;
+use Kernel\Controller;
+use Kernel\HttpRequest\Request;
 use Kernel\View;
 
 class ClientController
 {
+    private $client;
+    private $request;
+
+    public function __construct()
+    {
+        $this->client = new Client();
+    }
+
     public function index()
     {
         /** @var Client $client */
-        $client = new Client();
-        $data = $client->create();
-        var_dump($data->title);
-        View::render('client', []);
+        $clients = $this->client->index();
+        View::render('clients', $clients);
     }
 
     public function delete()
     {
-
-
+        $request = Request::request();
+        try {
+            $this->client->deleteBy($request->id);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
     }
 
     public function update()
@@ -31,4 +43,16 @@ class ClientController
     {
 
     }
+
+    public function store()
+    {
+        $request = Request::request();
+
+        $this->client->store($request);
+
+        Request::reset();
+
+        $this->index();
+    }
+
 }

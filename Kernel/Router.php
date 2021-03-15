@@ -2,11 +2,15 @@
 
 namespace Kernel;
 
+use Kernel\HttpRequest\Request;
+use Kernel\HttpRequest\RequestBag;
+
 class Router
 {
 
     /**
-     * @var array [ 'route' => [ 'method' => 'get', 'action' => [ class, method ] ] ]
+     * ex. [ 'method' => [ 'route' => [ class, method ] ]
+     * @var array $routes
      */
     private $routes;
 
@@ -14,41 +18,43 @@ class Router
     private $params;
 
     // Метод для добавления маршрутов в массив
-    private function add(string $route, array $action=[], string $method='get'): void
+    private function add(string $route, array $action=[], string $method='GET'): void
     {
         // Избавляемся от слеша
         $route = preg_replace('/\//', '\\/', $route);
-        $route = '/'.$route.'$/i';
+        $route = '/^'.$route.'$/i';
 
-        $this->routes[$route] = [
-            'method' => $method,
-            'action' => $action
-        ];
+        $this->routes[$method][$route] = $action;
 
     }
 
     public function get(string $route, array $action=[]): void
     {
-        $this->add($route, $action, Method::GET);
+        $this->add($route, $action, Request::METHOD_GET);
     }
 
     public function post(string $route, array $action=[]): void
     {
-        $this->add($route, $action, Method::POST);
+        $this->add($route, $action, Request::METHOD_POST);
+    }
+
+    public function delete(string $route, array $action=[]): void
+    {
+        $this->add($route, $action, Request::METHOD_DELETE);
+    }
+
+
+    public function put(string $route, array $action=[]): void
+    {
+        $this->add($route, $action, Request::METHOD_PUT);
     }
 
     public function match(string $url): bool
     {
-        foreach ($this->routes as $route => $params) {
-            if(preg_match($route, $url, $matches)) {
-                foreach ($matches as $key => $match) {
-                    if(is_string($key)) {
-                        $params['action'][$key] = $match;
-                    }
-                }
-
+        $method = Request::getMethod();
+        foreach ($this->routes[$method] as $route => $params) {
+            if(preg_match($route, $url)) {
                 $this->params = $params;
-
                 return true;
             }
         }
@@ -60,10 +66,11 @@ class Router
     public function dispatch($url)
     {
         $url = $this->clear($url);
+        Request::init();
         if($this->match($url)) {
-            $controller = $this->params['action'][0];
+            $controller = $this->params[0];
 
-            $action = $this->params['action'][1];
+            $action = $this->params[1];
 
             if(class_exists($controller)) {
                 try {
@@ -84,7 +91,7 @@ class Router
     /**
      * Очишаем из url query параметры
      * ex. url                      query           result
-     * localhost/client?page=0      client&page=1   client
+     * localhost/client?page=0      /client&page=1   /client
      *
      * @param string $url
      * @return string
@@ -102,4 +109,5 @@ class Router
 
         return $url;
     }
+
 }

@@ -2,10 +2,7 @@
 
 namespace Kernel;
 
-interface ViewInterface
-{
-    public static function render(string $view, array $params);
-}
+use Kernel\HttpRequest\Request;
 
 
 class View implements ViewInterface
@@ -14,11 +11,17 @@ class View implements ViewInterface
     // расширение шаблона
     protected $extension = 'php';
 
-    public static function render(string $view, array $result=[])
+
+    public static function render(string $view, $data = []): void
     {
         $file = dirname(__DIR__) . "/App/Views/$view.".(new self)->getExtension();
 
-        extract($result, EXTR_SKIP);
+        if($data instanceof Collection) $results['data'] = $data->toArray();
+        $results['url'] = Request::getUrl();
+        // Преобразуем ключи ассоциативного массива в переменные
+        if(is_array($results)) extract($results, EXTR_OVERWRITE);
+
+
 
         // Подключаем шаблон
         if(file_exists($file)) {

@@ -12,6 +12,7 @@ class Collection
         $this->data = $data;
     }
 
+    // TODO чет над сделать
     public function add($data = [])
     {
         $data = (is_array($data)) ?: array($data);
@@ -34,15 +35,23 @@ class Collection
         return null;
     }
 
-    public function first()
+    public function first(): self
     {
 
-        $reversedData = array_reverse($this->data);
-        $this->data = array_pop($reversedData);
+        if(!empty($this->data)) {
+            $reversedData = array_reverse($this->data);
+            $this->data = array_pop($reversedData);
+        }
 
         return $this;
     }
 
+    public function toArray(): array
+    {
+        return $this->data;
+    }
+
+    // TODO чет над сделать
     public function each(callable $callback)
     {
         foreach ($this->data as $data) {

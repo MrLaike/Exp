@@ -2,14 +2,23 @@
 
 namespace App\Controllers;
 
+use App\Models\Order;
+use Kernel\HttpRequest\Request;
 use Kernel\View;
 
 class OrderController
 {
+    private $order;
+
+    public function __construct()
+    {
+        $this->order = new Order();
+    }
 
     public function index()
     {
-        View::render('orders');
+        $orders = $this->order->index();
+        View::render('order/orders', $orders);
     }
 
     public function create()
@@ -17,9 +26,17 @@ class OrderController
 
     }
 
-
     public function delete()
     {
+        $request = Request::request();
+
+        $id = $request->id;
+
+        try {
+            $this->order->deleteBy($id);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
 
     }
 
